@@ -1,0 +1,48 @@
+<div class="maintenance-request-container">
+  <h2>Submit Maintenance Request</h2>
+
+  <form [formGroup]="maintenanceForm" (ngSubmit)="onSubmit()">
+    
+    <!-- Issue Description -->
+    <div class="form-group">
+      <label for="issueDescription">Describe the Issue</label>
+      <textarea 
+        id="issueDescription" 
+        formControlName="issueDescription" 
+        rows="4" 
+        placeholder="Describe the maintenance issue..." 
+        required>
+      </textarea>
+      <div *ngIf="maintenanceForm.get('issueDescription')?.invalid && maintenanceForm.get('issueDescription')?.touched" class="error">
+        Description is required.
+      </div>
+    </div>
+
+    <!-- Urgency Level -->
+    <div class="form-group">
+      <label for="urgency">Urgency Level</label>
+      <select id="urgency" formControlName="urgency" required>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <div *ngIf="maintenanceForm.get('urgency')?.invalid && maintenanceForm.get('urgency')?.touched" class="error">
+        Please select an urgency level.
+      </div>
+    </div>
+
+    <!-- Media Upload -->
+    <div class="form-group">
+      <label for="media">Upload Images or Videos (Optional)</label>
+      <input 
+        type="file" 
+        id="media" 
+        (change)="onFileChange($event)" 
+        multiple 
+        accept="image/*,video/*" />
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" [disabled]="maintenanceForm.invalid">Submit Request</button>
+  </form>
+</div>

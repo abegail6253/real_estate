@@ -1,0 +1,11 @@
+<div class="invite-container">
+    <button (click)="generateInvite()">Generate Invite</button>
+    <button (click)="reset()" *ngIf="inviteLink">Reset</button>
+  
+    <div *ngIf="inviteLink" class="qr-section">
+      <p>Invite Link:</p>
+      <p>{{ inviteLink }}</p>
+      <qrcode [qrdata]="inviteLink" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+  </div>
+  

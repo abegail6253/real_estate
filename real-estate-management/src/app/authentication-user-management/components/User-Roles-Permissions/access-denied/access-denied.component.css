@@ -1,0 +1,25 @@
+h2 {
+    color: #f44336; /* Red color for the error */
+    text-align: center;
+  }
+  
+  p {
+    text-align: center;
+    font-size: 1.2em;
+  }
+  
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #1976d2;
+  }
+  

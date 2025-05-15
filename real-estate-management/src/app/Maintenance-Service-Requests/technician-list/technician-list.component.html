@@ -1,0 +1,29 @@
+<div class="container">
+    <h2>Technician List</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Current Status</th>
+          <th>Current Action</th>
+          <th>Work History</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let technician of technicians">
+          <td>{{ technician.name }}</td>
+          <td>{{ technician.status }}</td>
+          <td>{{ technician.currentAction || 'No Current Task' }}</td>
+          <td>
+            <ul>
+              <li *ngFor="let work of technician.workHistory">
+                {{ work.task }} (Completed on: {{ work.date }} for Tenant: {{ work.tenant || 'No Tenant Assigned' }})
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Button to navigate to Maintenance Request Tracking -->
+    <button class="btn btn-primary" (click)="navigateToTracking()">Go to Maintenance Request Tracking</button>
+</div>

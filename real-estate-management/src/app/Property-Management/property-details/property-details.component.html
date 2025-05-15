@@ -1,0 +1,34 @@
+<div class="property-details">
+    <h2>{{ property.name }} for Rent</h2>
+  
+    <!-- Property images carousel -->
+    <div class="property-images">
+      <div *ngFor="let image of property.images" class="image-container">
+        <img [src]="image" alt="Property Image" class="img-fluid" />
+      </div>
+    </div>
+  
+    <div class="property-info">
+      <p><strong>Address:</strong> {{ property.address }}</p>
+      <p><strong>Type:</strong> {{ property.type }}</p>
+      <p><strong>Rent Price:</strong> ${{ property.rentPrice | currency }}</p>
+    </div>
+  
+    <!-- Lease Agreement -->
+    <div class="lease-agreement">
+      <h3>Lease Agreement</h3>
+      <p><strong>Lease Start Date:</strong> {{ property.leaseStartDate | date:'MMM d, yyyy' }}</p>
+      <p><strong>Lease End Date:</strong> {{ property.leaseEndDate | date:'MMM d, yyyy' }}</p>
+      <a [href]="property.leaseAgreement" target="_blank">View Lease Agreement</a>
+    </div>
+  
+    <!-- Tenant Information, only visible if the property is rented -->
+    <div *ngIf="property.status === 'Rented'" class="tenant-info">
+      <h3>Tenant Information</h3>
+      <p><strong>Tenant Name:</strong> {{ property.tenantName }}</p>
+      <p><strong>Tenant Contact:</strong> {{ property.tenantContact }}</p>
+    </div>
+  
+    <button class="btn btn-primary" (click)="goBack()">Back to Listings</button>
+  </div>
+  

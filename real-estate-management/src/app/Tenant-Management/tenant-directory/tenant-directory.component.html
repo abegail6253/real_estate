@@ -1,0 +1,11 @@
+<div class="tenant-directory">
+    <h2>Tenant Directory</h2>
+  
+    <div *ngFor="let tenant of tenants" class="tenant-item">
+      <h3>{{ tenant.name }}</h3>
+      <p><strong>Email:</strong> {{ tenant.email }}</p>
+      <p><strong>Assigned Property:</strong> {{ tenant.property.name }} ({{ tenant.property.address }})</p>
+      <button class="btn btn-info" [routerLink]="['/property-details', tenant.property.id]">View Property</button>
+    </div>
+  </div>
+  

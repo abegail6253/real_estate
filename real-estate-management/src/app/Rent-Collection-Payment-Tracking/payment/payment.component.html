@@ -1,0 +1,21 @@
+<!-- payment.component.html -->
+<div>
+    <h2>Rent Payment</h2>
+  
+    <!-- Stripe Card Element -->
+    <div>
+      <label for="card-element">Credit or Debit Card</label>
+      <div id="card-element"></div>  <!-- This is where the Stripe card element will be mounted -->
+    </div>
+  
+    <!-- Button to trigger Stripe payment -->
+    <div>
+      <button (click)="handleStripePayment()">Pay with Stripe</button>
+    </div>
+  
+    <!-- Button to trigger PayPal payment -->
+    <div>
+      <button (click)="handlePaypalPayment()">Pay with PayPal</button>
+    </div>
+  </div>
+  

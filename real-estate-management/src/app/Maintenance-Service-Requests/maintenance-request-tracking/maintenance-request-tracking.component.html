@@ -1,0 +1,146 @@
+<div class="container">
+  <h2>Maintenance Request Tracking</h2>
+
+  <!-- List of maintenance requests -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Property ID</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Assigned Technician</th>
+        <th>Date Requested</th>
+        <th>Date Completed</th>
+        <th>Uploaded Media</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let request of requests">
+        <td>{{ request.id }}</td>
+        <td>{{ request.propertyId }}</td>
+        <td>{{ request.issue_description }}</td>
+        <td>{{ request.status }}</td>
+        <td>{{ request.technician_name || 'Not Assigned' }}</td>
+        <td>
+          {{ request.requestedAt ? (request.requestedAt | date: 'yyyy-MM-dd HH:mm:ss') : 'No date available' }}
+        </td>
+        <td>
+          {{
+            request.status === 'Completed' && request.completedAt
+              ? (request.completedAt | date: 'yyyy-MM-dd HH:mm:ss')
+              : 'Not Completed'
+          }}
+        </td>
+        <td>
+          <div *ngIf="request.media && request.media.length > 0">
+            <div *ngFor="let media of request.media; let i = index">
+              <div *ngIf="i === 0 && media.file_path">
+                <img
+                  *ngIf="!media.file_type || media.file_type === 'image'"
+                  [src]="getMediaUrl(media.file_path)"
+                  alt="Uploaded media"
+                  class="uploaded-media"
+                  width="200"
+                />
+                <video
+                  *ngIf="media.file_type === 'video'"
+                  [src]="getMediaUrl(media.file_path)"
+                  controls
+                  class="uploaded-media"
+                  width="320"
+                ></video>
+              </div>
+
+              <div *ngIf="i === 0 && request.media.length > 1">
+                <button (click)="showMoreImages(request)" class="btn btn-link">
+                  {{ isExpanded(request) ? 'Hide Files' : 'View More' }}
+                </button>
+              </div>
+
+              <div *ngIf="isExpanded(request) && i !== 0 && media.file_path">
+                <img
+                  *ngIf="!media.file_type || media.file_type === 'image'"
+                  [src]="getMediaUrl(media.file_path)"
+                  alt="Uploaded media"
+                  class="uploaded-media"
+                  width="200"
+                />
+                <video
+                  *ngIf="media.file_type === 'video'"
+                  [src]="getMediaUrl(media.file_path)"
+                  controls
+                  class="uploaded-media"
+                  width="320"
+                ></video>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!request.media || request.media.length === 0">
+            No media uploaded
+          </div>
+        </td>
+        <td>
+          <button (click)="selectRequest(request)" class="btn btn-primary">View Details</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Request details and update form -->
+  <div *ngIf="selectedRequest" class="request-details">
+    <h3>Request Details</h3>
+
+    <p><strong>Description:</strong> {{ selectedRequest.issue_description }}</p>
+
+    <p><strong>Status:</strong>
+      <span *ngIf="userRole === 'tenant'">{{ selectedRequest.status }}</span>
+
+      <ng-container *ngIf="userRole !== 'tenant'">
+        <select 
+          [(ngModel)]="selectedRequest.status"
+          [disabled]="selectedRequest.status === 'Completed' && !statusEditEnabled"
+        >
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+        </select>
+
+        <button
+          *ngIf="selectedRequest.status === 'Completed' && !statusEditEnabled"
+          class="btn btn-warning btn-sm ms-2"
+          (click)="enableStatusEdit()"
+        >
+          Enable Editing
+        </button>
+      </ng-container>
+    </p>
+
+    <p><strong>Assign a Technician:</strong>
+      <span *ngIf="userRole === 'tenant'">{{ selectedRequest.technician_name || 'Not Assigned' }}</span>
+      <select *ngIf="userRole !== 'tenant'" [(ngModel)]="selectedRequest.assignedTo">
+        <option *ngFor="let technician of technicians" [value]="technician.id">{{ technician.name }}</option>
+      </select>
+    </p>
+
+    <p><strong>Created At:</strong> {{ selectedRequest.createdAt | date: 'fullDate' }}</p>
+
+    <p><strong>Date Requested:</strong>
+      {{ selectedRequest.requestedAt ? (selectedRequest.requestedAt | date: 'yyyy-MM-dd HH:mm:ss') : 'No date available' }}
+    </p>
+
+    <p><strong>Date Completed:</strong>
+      {{
+        selectedRequest.status === 'Completed' && selectedRequest.completedAt
+          ? (selectedRequest.completedAt | date: 'yyyy-MM-dd HH:mm:ss')
+          : 'Not Completed'
+      }}
+    </p>
+
+    <button *ngIf="userRole !== 'tenant'" (click)="updateRequest(selectedRequest)" class="btn btn-success">Update Request</button>
+  </div>
+
+  <!-- Button to navigate to Technician List -->
+  <div class="button-container">
+    <button (click)="navigateToTechnicianList()" class="btn btn-info">Go to Technician List</button>
+  </div>
+</div>

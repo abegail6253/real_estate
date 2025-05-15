@@ -1,0 +1,22 @@
+<div class="message-center">
+    <h2>Message Center</h2>
+
+    <div *ngIf="messages.length > 0">
+      <ul class="message-list">
+        <li *ngFor="let message of messages">
+          <div class="message">
+            <p><strong>{{ message.sender }}</strong>: {{ message.content }}</p>
+            <small>{{ message.timestamp | date: 'short' }}</small>
+            <button *ngIf="message.status !== 'read'" (click)="markAsRead(message.id)">
+              Mark as Read
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="new-message">
+      <textarea [(ngModel)]="newMessage" placeholder="Write your message..."></textarea>
+      <button (click)="sendMessage()">Send</button>
+    </div>
+</div>

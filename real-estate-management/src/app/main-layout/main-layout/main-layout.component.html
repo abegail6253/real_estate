@@ -1,0 +1,32 @@
+<mat-sidenav-container class="dashboard-wrapper">
+  <!-- Sidebar -->
+  <mat-sidenav #sidenav mode="side" opened="true" class="sidebar">
+    <h3>{{ role | titlecase }} Dashboard</h3>
+    <nav class="sidebar-links">
+      <ul>
+        <li *ngFor="let link of sidebarLinks[role]">
+          <a [routerLink]="link.route" routerLinkActive="active-link">{{ link.name }}</a>
+        </li>
+      </ul>
+    </nav>
+  </mat-sidenav>
+
+  <!-- Content Wrapper -->
+  <mat-sidenav-content>
+    <!-- Navbar -->
+    <mat-toolbar color="primary" class="fixed-header modern-toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Toggle sidenav">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>{{ role | titlecase }} Dashboard</span>
+      <span class="spacer"></span>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </mat-toolbar>
+
+    <!-- Main Content Section -->
+    <section class="dashboard-content">
+      <p>Welcome, {{ role | titlecase }}! Manage your properties and tenants here.</p>
+      <router-outlet></router-outlet>
+    </section>
+  </mat-sidenav-content>
+</mat-sidenav-container>

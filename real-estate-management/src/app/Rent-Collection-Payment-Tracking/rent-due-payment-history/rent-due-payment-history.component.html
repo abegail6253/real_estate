@@ -1,0 +1,32 @@
+<div class="rent-due-container">
+    <h2>Rent Due & Payment History</h2>
+    
+    <div class="rent-due">
+      <h3>Current Rent Due: ${{ rentDue | number: '1.2-2' }}</h3>
+    </div>
+    
+    <div class="overdue-amount">
+      <h3>Overdue Amount: ${{ overdueAmount | number: '1.2-2' }}</h3>
+    </div>
+  
+    <div class="payment-history">
+      <h3>Payment History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount Paid</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payment of paymentHistory">
+            <td>{{ payment.date | date }}</td>
+            <td>{{ payment.amountPaid | number: '1.2-2' }}</td>
+            <td>{{ payment.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

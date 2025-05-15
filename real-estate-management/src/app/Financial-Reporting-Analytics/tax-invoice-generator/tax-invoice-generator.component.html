@@ -1,0 +1,19 @@
+<div class="tax-invoice-generator">
+    <h2>Tax & Invoice Generator</h2>
+    
+    <div>
+      <button (click)="generateTaxReport()">Generate Tax Report</button>
+      <p>{{ generateTaxReport() }}</p>
+    </div>
+    
+    <div>
+      <button (click)="generateInvoice()">Generate Invoice</button>
+      <p>{{ invoiceDetails }}</p>
+    </div>
+  
+    <div>
+      <button (click)="generateFinancialSummary()">Generate Financial Summary</button>
+      <p>{{ generateFinancialSummary() }}</p>
+    </div>
+  </div>
+  

@@ -1,0 +1,64 @@
+<div class="lease-management-container">
+    <h2>Lease Management</h2>
+    
+    <!-- Add or Edit Lease Form -->
+    <div class="lease-form">
+      <h3>{{ currentLease.id ? 'Edit Lease' : 'Add New Lease' }}</h3>
+      <form (ngSubmit)="currentLease.id ? saveLease() : addLease()">
+        <div class="form-group">
+          <label for="property">Property</label>
+          <input type="text" id="property" class="form-control" [(ngModel)]="currentLease.property" name="property" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="tenant">Tenant</label>
+          <input type="text" id="tenant" class="form-control" [(ngModel)]="currentLease.tenant" name="tenant" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" class="form-control" [(ngModel)]="currentLease.startDate" name="startDate" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="endDate">End Date</label>
+          <input type="date" id="endDate" class="form-control" [(ngModel)]="currentLease.endDate" name="endDate" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="rentAmount">Rent Amount</label>
+          <input type="number" id="rentAmount" class="form-control" [(ngModel)]="currentLease.rentAmount" name="rentAmount" required />
+        </div>
+        
+        <button type="submit" class="btn btn-primary">{{ currentLease.id ? 'Save Lease' : 'Add Lease' }}</button>
+      </form>
+    </div>
+  
+    <!-- Lease List -->
+    <h3>Existing Leases</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Tenant</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Rent Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let lease of leases">
+          <td>{{ lease.property }}</td>
+          <td>{{ lease.tenant }}</td>
+          <td>{{ lease.startDate }}</td>
+          <td>{{ lease.endDate }}</td>
+          <td>{{ lease.rentAmount | currency }}</td>
+          <td>
+            <button (click)="editLease(lease.id)" class="btn btn-warning">Edit</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

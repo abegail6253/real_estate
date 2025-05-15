@@ -1,0 +1,53 @@
+<div class="admin-panel">
+  <h2>Admin Panel</h2>
+
+  <!-- User Management Section -->
+  <div class="section">
+    <h3>User Management</h3>
+    <ul>
+      <li *ngFor="let user of users">
+        {{ user.name }} ({{ user.role }})
+        <button (click)="deleteUser(user.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Property Management Section -->
+  <div class="section">
+    <h3>Property Management</h3>
+    <ul>
+      <li *ngFor="let property of properties">
+        {{ property.address }} ({{ property.status }})
+        <button (click)="deleteProperty(property.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Financial Data Section -->
+  <div class="section">
+    <h3>Financial Data</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Total Revenue</th>
+          <th>Expenses</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of financialData">
+          <td>{{ data.month }}</td>
+          <td>{{ data.totalRevenue | currency }}</td>
+          <td>{{ data.expenses | currency }}</td>
+          <td><button (click)="editFinancialData(data.month)">Edit</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Logout Section -->
+  <div class="logout">
+    <button (click)="logout()">Logout</button>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="tenant-dashboard">
+  <h2>Tenant Dashboard</h2>
+  <p>Welcome, Tenant! View and manage your rental information here.</p>
+
+  <!-- Navigation link to Profile Management page -->
+  <a routerLink="/profile-management" routerLinkActive="active-link">Manage Profile</a>
+
+  <div class="section">
+    <h3>Lease Information</h3>
+    <p><strong>Lease Start:</strong> {{ leaseStart }}</p>
+    <p><strong>Lease End:</strong> {{ leaseEnd }}</p>
+    <p><strong>Status:</strong> {{ leaseStatus }}</p>
+  </div>
+
+  <div class="section">
+    <h3>Payment History</h3>
+    <ul>
+      <li *ngFor="let payment of paymentHistory">
+        {{ payment.date }}: {{ payment.amount | currency }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>Maintenance Requests</h3>
+    <ul>
+      <li *ngFor="let request of maintenanceRequests">
+        {{ request.date }} - {{ request.status }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Button for submitting maintenance requests -->
+  <div class="maintenance-request">
+    <a routerLink="/maintenance-request" class="btn">Submit Maintenance Request</a>
+  </div>
+
+  <!-- Rent Payment History with Due Rent Notification -->
+  <div class="rent-due">
+    <h3>Rent Due</h3>
+    <p *ngIf="isRentDue">Your rent is due. Please make a payment.</p>
+    <a routerLink="/payment" class="btn">Pay Rent</a>
+  </div>
+
+  <!-- Document Storage Section -->
+  <div class="documents">
+    <h3>Your Documents</h3>
+    <ul>
+      <!-- Update the routerLink to direct to the correct component -->
+      <li><a routerLink="/lease-agreements" class="btn">View Lease Agreements</a></li>
+      <li><a routerLink="/payment-receipts" class="btn">View Payment Receipts</a></li>
+    </ul>
+  </div>
+</div>

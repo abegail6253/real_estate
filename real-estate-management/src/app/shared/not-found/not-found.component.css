@@ -1,0 +1,33 @@
+.not-found-container {
+    text-align: center;
+    padding: 100px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .not-found-container h1 {
+    font-size: 100px;
+    margin-bottom: 0;
+    color: #ff6b81;
+  }
+  
+  .not-found-container p {
+    font-size: 24px;
+    margin-top: 10px;
+    color: #333;
+  }
+  
+  .home-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ff6b81;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .home-link:hover {
+    background-color: #ff4757;
+  }
+  

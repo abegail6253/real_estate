@@ -1,0 +1,24 @@
+<div class="audit-activity-log-container">
+    <h2>Audit & Activity Logs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Timestamp</th>
+          <th>User</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of activityLogs">
+          <td>{{ log.action }}</td>
+          <td>{{ log.timestamp }}</td>
+          <td>{{ log.user }}</td>
+          <td>
+            <button (click)="deleteLog(log)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

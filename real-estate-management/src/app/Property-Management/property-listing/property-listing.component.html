@@ -1,0 +1,24 @@
+<div class="property-listing">
+    <h2>Property Listings</h2>
+  
+    <div *ngFor="let property of properties" class="property-card">
+      <div class="card-header">
+        <h3>{{ property.type }} for Rent</h3>
+        <span class="status" [ngClass]="{
+            'available': property.status === 'Available',
+            'rented': property.status === 'Rented'
+          }">
+          {{ property.status }}
+        </span>
+      </div>
+  
+      <p><strong>Address:</strong> {{ property.address }}</p>
+      <p><strong>Rent Price:</strong> ${{ property.rentPrice | currency:'USD':true }}</p>
+  
+      <!-- Show the 'View Details' button for both available and rented properties -->
+      <button (click)="viewDetails(property.id)">
+        View Details
+      </button>
+    </div>
+  </div>
+  
