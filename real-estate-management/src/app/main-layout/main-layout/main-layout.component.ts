@@ -53,7 +53,7 @@ export class MainLayoutComponent implements OnInit {
       { name: 'Landlord Dashboard', route: '/landlord-dashboard' },
       { name: 'Property Listing', route: '/property-listing' },
       { name: 'Tenant Directory', route: '/tenant-directory' },
-      { name: 'Lease Management', route: '/lease-management' },
+      { name: 'Lease Management', route: '/tenant-management/lease-management' },
       { name: 'Tenant Invite', route: '/tenant-invite' },
       { name: 'Maintenance Tracking', route: '/maintenance-tracking' }
       
@@ -63,7 +63,8 @@ export class MainLayoutComponent implements OnInit {
       { name: 'Tenant Management', route: '/tenant-management' },
       { name: 'Maintenance Request Tracking', route: '/maintenance-request-tracking' },
       { name: 'Message Center', route: '/message-center' },
-      { name: 'Maintenance Tracking', route: '/maintenance-tracking' }
+      { name: 'Maintenance Tracking', route: '/maintenance-tracking' },
+      { name: 'Tenant Invite', route: '/tenant-invite' }
     ]
   };
 

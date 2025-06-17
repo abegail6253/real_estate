@@ -1,34 +1,108 @@
 <div class="property-details">
-    <h2>{{ property.name }} for Rent</h2>
-  
-    <!-- Property images carousel -->
-    <div class="property-images">
-      <div *ngFor="let image of property.images" class="image-container">
-        <img [src]="image" alt="Property Image" class="img-fluid" />
-      </div>
+  <h2>{{ property.name }} for Rent</h2>
+
+  <!-- New fields -->
+  <p><strong>Title:</strong> {{ property.title }}</p>
+  <p><strong>Description:</strong> {{ property.description }}</p>
+  <p><strong>Status:</strong> {{ property.status }}</p>
+
+  <!-- Property images carousel -->
+  <div class="property-images">
+    <div *ngFor="let image of property.images" class="image-container">
+      <img [src]="image" alt="Property Image" class="img-fluid" />
     </div>
-  
-    <div class="property-info">
-      <p><strong>Address:</strong> {{ property.address }}</p>
-      <p><strong>Type:</strong> {{ property.type }}</p>
-      <p><strong>Rent Price:</strong> ${{ property.rentPrice | currency }}</p>
-    </div>
-  
-    <!-- Lease Agreement -->
-    <div class="lease-agreement">
-      <h3>Lease Agreement</h3>
-      <p><strong>Lease Start Date:</strong> {{ property.leaseStartDate | date:'MMM d, yyyy' }}</p>
-      <p><strong>Lease End Date:</strong> {{ property.leaseEndDate | date:'MMM d, yyyy' }}</p>
-      <a [href]="property.leaseAgreement" target="_blank">View Lease Agreement</a>
-    </div>
-  
-    <!-- Tenant Information, only visible if the property is rented -->
-    <div *ngIf="property.status === 'Rented'" class="tenant-info">
-      <h3>Tenant Information</h3>
-      <p><strong>Tenant Name:</strong> {{ property.tenantName }}</p>
-      <p><strong>Tenant Contact:</strong> {{ property.tenantContact }}</p>
-    </div>
-  
-    <button class="btn btn-primary" (click)="goBack()">Back to Listings</button>
   </div>
-  
+
+  <div class="property-info">
+    <p><strong>Address:</strong> {{ property.address }}</p>
+    <p><strong>Type:</strong> {{ property.type }}</p>
+    <p><strong>Rent Price:</strong> {{ property.rentPrice | currency }}</p>
+  </div>
+
+  <!-- Lease Agreement -->
+  <div class="lease-agreement" *ngIf="property.leaseStartDate && property.leaseEndDate">
+    <h3>Lease Agreement</h3>
+    <p><strong>Lease Start Date:</strong> {{ property.leaseStartDate | date: 'MMM d, yyyy' }}</p>
+    <p><strong>Lease End Date:</strong> {{ property.leaseEndDate | date: 'MMM d, yyyy' }}</p>
+    <a *ngIf="property.leaseAgreement" [href]="property.leaseAgreement" target="_blank">View Lease Agreement</a>
+  </div>
+
+  <!-- Tenant Information, only visible if the property is rented -->
+  <div *ngIf="property.status.toLowerCase() === 'rented'" class="tenant-info">
+    <h3>Tenant Information</h3>
+    <p><strong>Tenant Name:</strong> {{ property.tenantName }}</p>
+    <p><strong>Tenant Contact:</strong> {{ property.tenantContact }}</p>
+    <p><strong>Tenant Email:</strong> {{ property.tenantEmail }}</p>
+  </div>
+
+  <!-- Button to enable tenant re-assignment if already rented -->
+  <div *ngIf="property.status.toLowerCase() === 'rented' && !isAssignTenantEnabled" class="mt-3">
+    <button class="btn btn-warning" (click)="isAssignTenantEnabled = true">
+      Assign Different Tenant
+    </button>
+  </div>
+
+  <!-- Assign Tenant Form: visible if NOT rented OR user enabled re-assign -->
+  <div *ngIf="property.status.toLowerCase() !== 'rented' || isAssignTenantEnabled" class="assign-tenant-form mt-4">
+    <h3>Assign Tenant</h3>
+
+    <form [formGroup]="assignTenantForm" (ngSubmit)="assignTenant()">
+      <div class="form-group mb-2">
+        <label for="tenantId">Select Tenant:</label>
+        <select 
+          id="tenantId" 
+          formControlName="tenantId" 
+          class="form-control"
+          [disabled]="!isAssignTenantEnabled && property.status.toLowerCase() === 'rented'">
+          <option value="" disabled>Select a tenant</option>
+          <option *ngFor="let tenant of tenants" [value]="tenant.id">
+            {{ tenant.first_name }} {{ tenant.last_name }} - {{ tenant.email }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group mb-2">
+        <label for="leaseStartDate">Lease Start Date:</label>
+        <input 
+          id="leaseStartDate" 
+          formControlName="leaseStartDate" 
+          type="date" 
+          class="form-control" 
+          [disabled]="!isAssignTenantEnabled && property.status.toLowerCase() === 'rented'" />
+      </div>
+
+      <div class="form-group mb-2">
+        <label for="leaseEndDate">Lease End Date:</label>
+        <input 
+          id="leaseEndDate" 
+          formControlName="leaseEndDate" 
+          type="date" 
+          class="form-control" 
+          [disabled]="!isAssignTenantEnabled && property.status.toLowerCase() === 'rented'" />
+      </div>
+
+      <div class="form-group mb-2">
+        <label for="leaseAgreementUrl">Lease Agreement URL (optional):</label>
+        <input 
+          id="leaseAgreementUrl" 
+          formControlName="leaseAgreementUrl" 
+          type="text" 
+          class="form-control" 
+          placeholder="Enter lease agreement URL"
+          [disabled]="!isAssignTenantEnabled && property.status.toLowerCase() === 'rented'" />
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="assigningTenant || (!isAssignTenantEnabled && property.status.toLowerCase() === 'rented')">
+        {{ assigningTenant ? 'Assigning...' : 'Assign Tenant' }}
+      </button>
+    </form>
+
+    <div *ngIf="assignSuccess" class="alert alert-success mt-2">{{ assignSuccess }}</div>
+    <div *ngIf="assignError" class="alert alert-danger mt-2">{{ assignError }}</div>
+  </div>
+
+  <button class="btn btn-primary mt-3" (click)="goBack()">Back to Listings</button>
+</div>

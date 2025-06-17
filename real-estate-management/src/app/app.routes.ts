@@ -118,10 +118,16 @@ export const routes: Routes = [
         data: { role: UserRole.Admin, expectedRole: 'admin' }
       },
       {
+        path: 'leasemanagement',
+        component: TenantInviteComponent,
+        canActivate: [RoleGuard],
+        data: { role: UserRole.Landlord, expectedRole: 'landlord' }
+      },
+      {
         path: 'tenant-invite',
         component: TenantInviteComponent,
         canActivate: [RoleGuard],
-        data: { role: UserRole.Admin, expectedRole: 'admin' }
+        data: { role: UserRole.Landlord, expectedRole: 'landlord' }
       },
       { path: '', redirectTo: '/login', pathMatch: 'full' }
     ]

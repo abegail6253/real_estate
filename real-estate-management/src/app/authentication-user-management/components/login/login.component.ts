@@ -4,7 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RegisterComponent } from '../register/register.component';
-import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt'; // <-- Updated
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +14,7 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt'; // <-- Updat
   imports: [FormsModule, CommonModule, RegisterComponent],
   providers: [
     JwtHelperService,
-    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS } // <-- Fix for NullInjectorError
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }
   ]
 })
 export class LoginComponent {
@@ -39,16 +39,20 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe(
       (response: any) => {
         console.log('Login successful:', response);
-        this.authService.handleLoginResponse(response);
 
-        const token = response.token;
-        const isExpired = this.jwtHelper.isTokenExpired(token);
+        // ✅ Save token and role BEFORE navigating
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('role', response.role);
+
+        // ✅ Optional: Validate token
+        const isExpired = this.jwtHelper.isTokenExpired(response.token);
         if (isExpired) {
           console.log('Token is expired');
         } else {
           console.log('Token is valid');
         }
 
+        // ✅ Redirect AFTER token is saved
         this.redirectUser(response.role);
       },
       (error) => {

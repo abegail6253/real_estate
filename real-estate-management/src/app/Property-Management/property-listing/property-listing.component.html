@@ -1,24 +1,169 @@
-<div class="property-listing">
-    <h2>Property Listings</h2>
-  
-    <div *ngFor="let property of properties" class="property-card">
-      <div class="card-header">
-        <h3>{{ property.type }} for Rent</h3>
-        <span class="status" [ngClass]="{
-            'available': property.status === 'Available',
-            'rented': property.status === 'Rented'
-          }">
-          {{ property.status }}
-        </span>
-      </div>
-  
-      <p><strong>Address:</strong> {{ property.address }}</p>
-      <p><strong>Rent Price:</strong> ${{ property.rentPrice | currency:'USD':true }}</p>
-  
-      <!-- Show the 'View Details' button for both available and rented properties -->
-      <button (click)="viewDetails(property.id)">
-        View Details
-      </button>
-    </div>
+<!-- Add New Property Form -->
+<h2 style="margin-top: 40px;">Add New Property</h2>
+<form (ngSubmit)="submitProperty()" #propertyForm="ngForm">
+  <div>
+    <label>Property Name:</label>
+    <input name="name" [(ngModel)]="property.name" required />
   </div>
-  
+
+  <div>
+    <label>Title:</label>
+    <input name="title" [(ngModel)]="property.title" placeholder="e.g. 2-Bedroom Condo" />
+  </div>
+
+  <div>
+    <label>Description:</label>
+    <textarea name="description" [(ngModel)]="property.description" placeholder="Write description..."></textarea>
+  </div>
+
+  <div>
+    <label>Price:</label>
+    <input type="number" name="price" [(ngModel)]="property.price" step="0.01" required />
+  </div>
+
+  <div>
+    <label>Upload Images:</label>
+    <input type="file" multiple (change)="onFilesSelected($event)" />
+  </div>
+
+  <div>
+    <label>Country:</label>
+    <select name="country" [(ngModel)]="property.country" (change)="onCountryChange()" required>
+      <option value="">-- Select Country --</option>
+      <option *ngFor="let country of countries" [value]="country.isoCode">{{ country.name }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>State:</label>
+    <select name="state" [(ngModel)]="property.state" (change)="onStateChange()" required>
+      <option value="">-- Select State --</option>
+      <option *ngFor="let state of states" [value]="state.isoCode">{{ state.name }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>City:</label>
+    <select name="city" [(ngModel)]="property.city" required>
+      <option value="">-- Select City --</option>
+      <option *ngFor="let city of cities" [value]="city.name">{{ city.name }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Street Address:</label>
+    <input name="street" [(ngModel)]="property.street" required />
+  </div>
+
+  <div>
+  <label>Status:</label>
+  <select name="status" [(ngModel)]="property.status">
+    <option value="available">Available</option>
+    <option value="rented">Rented</option>
+  </select>
+</div>
+
+
+  <div>
+    <label>Property Type:</label>
+    <select name="type" [(ngModel)]="property.type" required>
+      <option value="">-- Select Type --</option>
+      <option value="Apartment">Apartment</option>
+      <option value="Condo">Condo</option>
+      <option value="House">House</option>
+      <option value="Studio">Studio</option>
+      <option value="Townhouse">Townhouse</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+
+  <button type="submit">Add Property</button>
+</form>
+
+<!-- Filters Section -->
+<div class="filters" style="margin-bottom: 20px;">
+  <select [(ngModel)]="filters.country" (change)="onCountryChange()">
+    <option value="">Select Country</option>
+    <option *ngFor="let country of countries" [value]="country.isoCode">{{ country.name }}</option>
+  </select>
+
+  <select [(ngModel)]="filters.state" (change)="onStateChange()">
+    <option value="">Select State</option>
+    <option *ngFor="let state of states" [value]="state.isoCode">{{ state.name }}</option>
+  </select>
+
+  <select [(ngModel)]="filters.city">
+    <option value="">Select City</option>
+    <option *ngFor="let city of cities" [value]="city.name">{{ city.name }}</option>
+  </select>
+
+  <input [(ngModel)]="filters.maxPrice" type="number" placeholder="Max Price" />
+  <select [(ngModel)]="filters.type">
+    <option value="">All Types</option>
+    <option value="apartment">Apartment</option>
+    <option value="house">House</option>
+    <option value="condo">Condo</option>
+    <option value="studio">Studio</option>
+    <option value="townhouse">Townhouse</option>
+  </select>
+  <button (click)="applyFilters()">Apply Filters</button>
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination" style="margin-bottom: 20px;">
+  <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+  <span>Page {{ currentPage }}</span>
+  <button (click)="nextPage()">Next</button>
+</div>
+
+<!-- Property Listing Section -->
+<div class="property-listing">
+  <h2>Property Listings</h2>
+
+  <div *ngIf="properties.length === 0">No properties found.</div>
+
+  <div *ngFor="let property of properties" class="property-card" [attr.id]="'property-' + property.id">
+    <div class="card-header">
+      <h3>{{ property?.title }}</h3>
+      <span class="status"
+            [ngClass]="{
+              'available': formatStatus(property?.status) === 'Available',
+              'rented': formatStatus(property?.status) === 'Rented'
+            }">
+        {{ formatStatus(property?.status) }}
+      </span>
+    </div>
+
+    <img *ngIf="property?.image_url"
+         [src]="'http://localhost:5000' + property.image_url"
+         alt="Property image"
+         class="property-image" />
+
+    <p *ngIf="property?.name"><strong>Name:</strong> {{ property.name }}</p>
+    <p *ngIf="property?.type"><strong>Type:</strong> {{ property.type }}</p>
+    <p *ngIf="property?.address"><strong>Address:</strong> {{ property.address }}</p>
+
+    <p *ngIf="!getCountryCode(property)" style="color: red; font-weight: bold;">
+      ⚠️ Missing country code on this property!
+    </p>
+
+    <p *ngIf="property?.description">
+      <strong>Description:</strong> {{ property.description }}
+    </p>
+
+    <p *ngIf="property?.price != null">
+      <strong>Rent Price:</strong>
+      {{ getCurrencySymbolFromCountry(getCountryCode(property)) }}{{ property.price | number:'1.0-2' }}
+    </p>
+
+    <button (click)="viewDetails(property?.id)">View Details</button>
+    <button (click)="deleteProperty(property?.id)" style="color: red;">Delete</button>
+  </div>
+
+  <!-- Delete All Button -->
+  <div *ngIf="properties.length > 0" style="margin-top: 30px;">
+    <button (click)="deleteAllProperties()" style="background-color: darkred; color: white;">
+      🧹 Delete All Properties
+    </button>
+  </div>
+</div>

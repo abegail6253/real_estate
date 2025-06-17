@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class MaintenanceRequestComponent {
   maintenanceForm: FormGroup;
   selectedFiles: File[] = [];
+  formSubmitted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -36,20 +37,19 @@ export class MaintenanceRequestComponent {
   }
 
   onSubmit(): void {
+    this.formSubmitted = true;
+
     if (this.maintenanceForm.invalid) {
       alert('Please fill out all required fields!');
       return;
     }
 
-    const formValues = this.maintenanceForm.value;
-    console.log('Form Values:', formValues); // ✅ Debug form values
-
-    // Defensive check (optional, but helpful)
-    if (!formValues.issueDescription || !formValues.urgency) {
-      alert('Missing required form data.');
+    if (this.selectedFiles.length === 0) {
+      alert('Please upload at least one image or video file before submitting.');
       return;
     }
 
+    const formValues = this.maintenanceForm.value;
     const formData = new FormData();
     formData.append('issueDescription', formValues.issueDescription);
     formData.append('urgency', formValues.urgency);
@@ -59,18 +59,13 @@ export class MaintenanceRequestComponent {
       formData.append('media', file, file.name);
     });
 
-    // Debugging: log FormData entries
-    console.log('Submitting FormData:');
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-
     this.maintenanceRequestService.submitRequest(formData).subscribe({
       next: (response) => {
         console.log('✅ Maintenance request submitted successfully', response);
         alert('Maintenance request submitted successfully!');
         this.maintenanceForm.reset();
         this.selectedFiles = [];
+        this.formSubmitted = false; // reset flag after success
         this.router.navigate(['/maintenance-tracking']);
       },
       error: (error) => {

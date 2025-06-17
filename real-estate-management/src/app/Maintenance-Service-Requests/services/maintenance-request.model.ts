@@ -15,4 +15,5 @@ export interface MaintenanceRequest {
   file_path?: string;  // Optional, for direct file path
   technician_name?: string;  // Added technician_name to store the technician's name
   assignedToId?: number; // Optional: Added if technician_id or similar is used
+  type: string;
 }

@@ -33,16 +33,21 @@
 
     <!-- Media Upload -->
     <div class="form-group">
-      <label for="media">Upload Images or Videos (Optional)</label>
+      <label for="media">Upload Images or Videos</label>
       <input 
         type="file" 
         id="media" 
         (change)="onFileChange($event)" 
         multiple 
         accept="image/*,video/*" />
+
+      <!-- ❗ Visual warning if no file uploaded -->
+      <div *ngIf="selectedFiles.length === 0 && formSubmitted" class="error">
+        Please upload at least one file before submitting.
+      </div>
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" [disabled]="maintenanceForm.invalid">Submit Request</button>
+    <button type="submit">Submit Request</button>
   </form>
 </div>

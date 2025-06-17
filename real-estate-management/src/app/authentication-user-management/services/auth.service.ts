@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Router } from '@angular/router'; // Import Router for redirection
-import { jwtDecode } from 'jwt-decode';  // Corrected to named import
+import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api'; // Base API URL
+  private apiUrl = 'http://localhost:5000/api';
   private currentUserRole: string | null = null;
   private currentUserEmail: string | null = null;
 
@@ -21,18 +21,36 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, loginPayload).pipe(
       tap((response) => {
         // Save token and user role in localStorage
-        localStorage.setItem('jwt_token', response.token);  // Save the token
-        localStorage.setItem('role', response.role);        // Save the role
-        localStorage.setItem('email', response.email);      // Save email
+        localStorage.setItem('jwt_token', response.token);
+        localStorage.setItem('role', response.role);
+        localStorage.setItem('email', response.email);
 
-        // Log the user role to ensure it's correctly saved
-        console.log('User role after login:', response.role); // Log user role after successful login
-        console.log('Role saved to localStorage:', response.role);  // Check this log
+        // Decode token and store landlord ID if applicable
+        const decoded: any = this.decodeToken(response.token);
+        console.log('✅ Decoded JWT:', decoded);
+        if (decoded && decoded.role === 'landlord') {
+          localStorage.setItem('landlord_id', decoded.id.toString());
+          console.log('✅ Landlord ID saved:', decoded.id);
+        }
 
-        // Handle redirection based on role
+        // Log role
+        console.log('User role after login:', response.role);
+        console.log('Role saved to localStorage:', response.role);
+
+        // Handle redirection
         this.redirectUser(response.role);
       })
     );
+  }
+
+  // Decode JWT token
+  private decodeToken(token: string): any {
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('❌ Failed to decode JWT:', error);
+      return null;
+    }
   }
 
   // Role-based redirection
@@ -46,23 +64,21 @@ export class AuthService {
     } else if (role === 'tenant') {
       this.router.navigate(['/tenant-dashboard']);
     } else {
-      this.router.navigate(['/login']); // Fallback to login if role is unknown
+      this.router.navigate(['/login']);
     }
   }
 
-  // Handle successful login response
+  // Handle successful login response (can be used externally if needed)
   handleLoginResponse(response: any): void {
     const { token, role, email } = response;
 
     this.currentUserRole = role;
     this.currentUserEmail = email;
 
-    // Save to localStorage using consistent key names
-    localStorage.setItem('role', role);  // Consistent key for role
+    localStorage.setItem('role', role);
     localStorage.setItem('email', email);
     localStorage.setItem('jwt_token', token);
 
-    // Log to verify the role and token consistency
     console.log('Role saved in localStorage:', role);
     console.log('JWT Token saved in localStorage:', token);
   }
@@ -71,38 +87,42 @@ export class AuthService {
   logout(): void {
     this.currentUserRole = null;
     this.currentUserEmail = null;
-    localStorage.removeItem('role');  // Remove using the consistent key
+    localStorage.removeItem('role');
     localStorage.removeItem('email');
     localStorage.removeItem('jwt_token');
+    localStorage.removeItem('landlord_id'); // Remove landlord ID if logging out
   }
 
   // Getter methods
   getRole(): string | null {
-    return this.currentUserRole || localStorage.getItem('role');  // Get using consistent key
+    return this.currentUserRole || localStorage.getItem('role');
   }
 
   getEmail(): string | null {
-    return this.currentUserEmail || localStorage.getItem('email');  // Get using consistent key
+    return this.currentUserEmail || localStorage.getItem('email');
   }
 
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
 
-  // Authentication check
-  isAuthenticated(): boolean {
-    return !!this.getToken(); // Check if token exists
+  getLandlordId(): string | null {
+    return localStorage.getItem('landlord_id');
   }
 
-  // User role fallback
+  // Authentication check
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  // Get role from decoded token
   getUserRole(): string {
     const token = this.getToken();
     if (token) {
-      const decodedToken: any = jwtDecode(token); // Decode the token using jwtDecode function
-      console.log('Decoded Token:', decodedToken);  // Log decoded token to check its structure
-      return decodedToken.role || 'tenant'; // Assuming 'role' field exists in the decoded token
+      const decoded: any = this.decodeToken(token);
+      return decoded?.role || 'tenant';
     }
-    return 'tenant'; // Return 'tenant' if no token or role is not present
+    return 'tenant';
   }
 
   // Set headers with token
@@ -110,11 +130,11 @@ export class AuthService {
     const token = this.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: token ? `Bearer ${token}` : '', // Corrected the backticks here
+      Authorization: token ? `Bearer ${token}` : '',
     });
   }
 
-  // Update profile (requires authentication)
+  // Update profile
   updateProfile(user: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/user/update`, user, {
       headers: this.getHeaders(),

@@ -1,35 +1,81 @@
-<h2>Landlord Dashboard</h2>
-<p>Welcome, Landlord! Manage your properties and tenants here.</p>
+<h2>Add New Property</h2>
+<form (ngSubmit)="submitProperty()" #propertyForm="ngForm">
 
-<!-- Main Navigation -->
-<nav class="dashboard-links">
-  <a routerLink="/profile-management" routerLinkActive="active-link">Manage Profile</a> |
-  <a routerLink="/property-listing" routerLinkActive="active-link">Manage Properties</a> |
-  <a routerLink="/property-managers" routerLinkActive="active-link">Add / Assign Property Managers</a> |
-  <a routerLink="/lease-management" routerLinkActive="active-link">Generate Lease Agreements</a> |
-  <a routerLink="/tenant-directory" routerLinkActive="active-link">Tenant Data & Reports</a> |
-  <a routerLink="/access-permissions" routerLinkActive="active-link">Manage Access Permissions</a> |
-  <a routerLink="/notifications" routerLinkActive="active-link">Notifications</a> |
-  <a routerLink="/maintenance-request-tracking" routerLinkActive="active-link">Track Maintenance Requests</a> |
-  <a routerLink="/message-center" routerLinkActive="active-link">Communicate</a> |
-  <a routerLink="/tenant-management" routerLinkActive="active-link">Manage Tenants</a> |
-  <a routerLink="/tenant-invite" routerLinkActive="active-link">Generate Invite Links</a>
-</nav>
+  <div>
+    <label>Property Name:</label>
+    <input name="name" [(ngModel)]="property.name" required />
+  </div>
 
-<!-- Financial Reporting Section -->
-<div class="section">
-  <h3>Financial Reporting</h3>
-  <a routerLink="/financial-reporting" class="btn">View Financial Reports</a>
-</div>
+  <div>
+    <label>Title:</label>
+    <input name="title" [(ngModel)]="property.title" placeholder="e.g. 2-Bedroom Condo" />
+  </div>
 
-<!-- Tax & Invoice Generator Section -->
-<div class="section">
-  <h3>Tax & Invoice Generation</h3>
-  <a routerLink="/tax-invoice-generator" class="btn">Generate Tax Invoices</a>
-</div>
+  <div>
+    <label>Description:</label>
+    <textarea name="description" [(ngModel)]="property.description" placeholder="Write description..."></textarea>
+  </div>
 
-<!-- Document Storage Section -->
-<div class="section">
-  <h3>Your Documents</h3>
-  <a routerLink="/document-storage" class="btn">View Documents</a>
-</div>
+  <div>
+    <label>Price:</label>
+    <input type="number" name="price" [(ngModel)]="property.price" step="0.01" required />
+  </div>
+
+  <!-- ✅ Multiple images upload -->
+  <div>
+    <label>Upload Images:</label>
+    <input type="file" multiple (change)="onFilesSelected($event)" />
+  </div>
+
+  <div>
+    <label>Country:</label>
+    <select name="country" [(ngModel)]="property.country" (change)="onCountryChange()" required>
+      <option value="">-- Select Country --</option>
+      <option *ngFor="let country of countries" [value]="country.isoCode">{{ country.name }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>State:</label>  <!-- updated label -->
+    <select name="state" [(ngModel)]="property.state" (change)="onStateChange()" required>  <!-- updated name & event -->
+      <option value="">-- Select State --</option>
+      <option *ngFor="let state of states" [value]="state.isoCode">{{ state.name }}</option>  <!-- renamed provinces → states -->
+    </select>
+  </div>
+
+  <div>
+    <label>City:</label>
+    <select name="city" [(ngModel)]="property.city" required>
+      <option value="">-- Select City --</option>
+      <option *ngFor="let city of availableCities" [value]="city.name">{{ city.name }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Street Address:</label>
+    <input name="street" [(ngModel)]="property.street" required />
+  </div>
+
+  <div>
+    <label>Status:</label>
+    <select name="status" [(ngModel)]="property.status">
+      <option value="Available">Available</option>
+      <option value="Rented">Rented</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Property Type:</label>
+    <select name="type" [(ngModel)]="property.type" required>
+      <option value="">-- Select Type --</option>
+      <option value="Apartment">Apartment</option>
+      <option value="Condo">Condo</option>
+      <option value="House">House</option>
+      <option value="Studio">Studio</option>
+      <option value="Townhouse">Townhouse</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+
+  <button type="submit">Add Property</button>
+</form>
